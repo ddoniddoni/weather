@@ -1,9 +1,10 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-import { koreaPlace } from "../lib/korea";
-import { getWeather } from "../api/weather";
 import { useEffect, useState } from "react";
-import { Card } from "./Card";
+import { Card } from "../../components/Card";
+import { koreaPlace } from "../../data/korea";
+import { getWeather } from "../../api/weather";
+import { Theme } from "../../styles/theme";
 
 // http://api.openweathermap.org/geo/1.0/direct?q=korea&limit={limit}&appid={API key}
 // http://api.openweathermap.org/geo/1.0/direct?q=korea&appid={API key}
@@ -83,13 +84,13 @@ const Home = () => {
     </>
   );
 };
-const Container = styled.main`
+const Container = styled.div<{ theme: Theme }>`
   display: flex;
   flex-direction: column;
   height: calc(100vh - 70px);
   width: 100%;
   overflow-x: hidden;
-  background-color: #e0d9d9;
+  background-color: ${(props) => props.theme.background};
 `;
 const ContainerTop = styled.div`
   flex: 1;

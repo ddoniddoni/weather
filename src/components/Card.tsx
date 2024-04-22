@@ -1,13 +1,17 @@
 import styled from "styled-components";
-import { IWeather } from "./Home";
+import { IWeather } from "../pages/Home/Home";
+import { Theme } from "../styles/theme";
 interface CardProps {
   weather: IWeather;
 }
 
 export const Card = ({ weather }: CardProps) => {
-  console.log(weather);
   return (
-    <Container style={{ backgroundImage: `url(/korea/${weather.city}.jpg)` }}>
+    <Container
+      style={{
+        backgroundImage: `url(/cities/${weather.city}.jpg)`,
+      }}
+    >
       <ContentContainer>
         <ContentLeft>
           <ImageContainer>
@@ -27,7 +31,9 @@ export const Card = ({ weather }: CardProps) => {
         </ContentLeft>
         <ContentRight>
           <TempContainer>
-            <TempText>{weather.temp}°C</TempText>
+            <TempText>
+              <h1>{weather.temp}°C</h1>
+            </TempText>
           </TempContainer>
           <DesContainer>
             <TempDetailText>
@@ -51,15 +57,6 @@ const Container = styled.div`
   box-shadow: rgb(0 0 0 / 69%) 0px 6px 22px -10px,
     rgb(0 0 0 / 100%) 0px 10px 10px -10px;
   background-size: cover;
-`;
-
-const Title = styled.div`
-  display: flex;
-  padding-left: 15px;
-  align-items: center;
-  font-weight: 700;
-  font-size: 22px;
-  height: 15%;
 `;
 const ContentContainer = styled.div`
   display: flex;
@@ -153,14 +150,17 @@ const CityText = styled.div`
     font-size: 28px;
   }
 `;
-const ContentRight = styled.div`
+const ContentRight = styled.div<{ theme: Theme }>`
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
   width: 100%;
   height: 100%;
-  background-color: #f0f0f0;
+  background-color: ${(props) => props.theme.background};
+  h1 {
+    color: ${(props) => props.theme.color};
+  }
 `;
 const TempText = styled.div`
   display: flex;
@@ -168,7 +168,7 @@ const TempText = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  font-size: 72px;
+  font-size: 60px;
   letter-spacing: 3px;
   font-weight: 700;
 `;
