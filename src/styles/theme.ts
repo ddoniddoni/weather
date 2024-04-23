@@ -11,7 +11,7 @@ export const lightTheme: Theme = {
 };
 
 export const darkTheme: Theme = {
-  background: "#2f3640",
+  background: "#111014",
   color: "#FFFFFF",
   // 기타 dark 테마 속성
 };

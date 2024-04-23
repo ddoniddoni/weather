@@ -1,7 +1,6 @@
-import { useState } from "react";
 import { GoogleMap, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
-import styled from "styled-components";
 import { useThemeStore } from "../store/themeStore";
+import { Location } from "../interfaces/weatherType";
 
 const darkMapStyle = [
   { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
@@ -83,19 +82,12 @@ const darkMapStyle = [
     stylers: [{ color: "#17263c" }],
   },
 ];
-interface Ilocation {
-  coordinates?: Coordinate;
-}
 
-interface Coordinate {
-  lat: number;
-  lng: number;
-}
 const containerStyle = {
   width: "90%",
   height: "90%",
 };
-export const GooMap = ({ coordinates }: Ilocation) => {
+export const GooMap = ({ coordinates }: Location) => {
   const style = useThemeStore().theme === "light" ? null : darkMapStyle;
   const center = coordinates;
   const { isLoaded } = useJsApiLoader({
@@ -118,6 +110,7 @@ export const GooMap = ({ coordinates }: Ilocation) => {
       zoom={16}
       options={{
         styles: style,
+        disableDefaultUI: true,
       }}
       onClick={handleMapClick}
     ></GoogleMap>

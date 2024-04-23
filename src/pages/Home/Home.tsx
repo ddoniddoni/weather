@@ -1,36 +1,22 @@
-import { useQueries, useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
 import { Card } from "../../components/Card";
-import { koreaPlace } from "../../data/korea";
-import { getWeather } from "../../api/weather";
 import { Theme } from "../../styles/theme";
+import { useGetWeathers } from "../../hooks/useGetWeathers";
 
 // http://api.openweathermap.org/geo/1.0/direct?q=korea&limit={limit}&appid={API key}
 // http://api.openweathermap.org/geo/1.0/direct?q=korea&appid={API key}
 // https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
 // const iconURL = `http://openweathermap.org/img/wn/${icon}@2x.png`; < 아이콘
-export interface IWeather {
-  city: string;
-  icon: string;
-  weather: string;
-  sunrise: string;
-  sunset: string;
-  temp: string;
-  temp_max: string;
-  temp_min: string;
-  date: string;
-}
 
-const getTime = (t: number) => {
-  const date = new Date(t * 1000);
+export const getTime = (t: number | Date) => {
+  const date = typeof t === "number" ? new Date(t * 1000) : new Date();
   const hour = ("0" + date.getHours()).slice(-2);
   const minute = ("0" + date.getMinutes()).slice(-2);
   const seconds = ("0" + date.getSeconds()).slice(-2);
   return hour + ":" + minute + ":" + seconds;
 };
 
-const getDate = () => {
+export const getDate = () => {
   const today = new Date();
   const year = today.getFullYear();
   const month = ("0" + (today.getMonth() + 1)).slice(-2);
@@ -39,45 +25,13 @@ const getDate = () => {
 };
 
 const Home = () => {
-  const [weathers, setWeathers] = useState<IWeather[]>([]);
-
-  const combinedQueries = useQueries({
-    queries: Object.values(koreaPlace).map((k) => ({
-      queryKey: ["weathers", k],
-      queryFn: () => getWeather(k),
-    })),
-    combine: (results) => {
-      return {
-        data: results.map((result) => result.data),
-        pending: results.some((result) => result.isPending),
-      };
-    },
-  });
-  useEffect(() => {
-    if (!combinedQueries.pending) {
-      const weatherTemp = combinedQueries.data.map((weather) => {
-        return {
-          city: weather.name.replace(/\s+/g, ""),
-          icon: weather.weather[0].icon,
-          weather: weather.weather[0].main,
-          sunrise: getTime(weather.sys.sunrise),
-          sunset: getTime(weather.sys.sunset),
-          temp: weather.main.temp.toFixed(1),
-          temp_max: weather.main.temp_max.toFixed(1),
-          temp_min: weather.main.temp_min.toFixed(1),
-          date: getDate(),
-        };
-      });
-      setWeathers(weatherTemp);
-    }
-  }, [combinedQueries]);
-
+  const weathers = useGetWeathers();
   return (
     <>
       <Container>
         <ContainerTop>
           {weathers.map((weather, index) => (
-            <Card key={index} weather={weather} />
+            <Card key={weather.id} weather={weather} />
           ))}
         </ContainerTop>
       </Container>
@@ -104,36 +58,4 @@ const ContainerTop = styled.div`
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 `;
-const ContainerMiddle = styled.div`
-  flex: 1;
-  overflow-x: hidden;
-  display: grid;
-  grid-gap: 25px;
-  gap: 25px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-`;
-const ContainerBottom = styled.div`
-  flex: 1;
-  overflow-x: hidden;
-  display: grid;
-  grid-gap: 25px;
-  gap: 25px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-`;
-
-const Loading = styled.div`
-  width: 200px;
-  height: 200px;
-  background-color: red;
-  color: white;
-`;
-
 export default Home;

@@ -1,11 +1,8 @@
 import styled from "styled-components";
-import { IWeather } from "../pages/Home/Home";
 import { Theme } from "../styles/theme";
-interface CardProps {
-  weather: IWeather;
-}
+import { WeatherType } from "../interfaces/weatherType";
 
-export const Card = ({ weather }: CardProps) => {
+export const Card = ({ weather }: WeatherType) => {
   return (
     <Container
       style={{
