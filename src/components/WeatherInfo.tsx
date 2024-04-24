@@ -24,12 +24,12 @@ export const WeatherInfo = ({ forecast, weather }: WeatherInfo) => {
               <TempText>{weather.temp}°C</TempText>
               <TempDetailText>
                 <Detail>
-                  <h1>최고 :&nbsp;</h1>
-                  <p>{weather.temp_max}</p>
+                  <h1>Max :&nbsp;</h1>
+                  <p>{weather.temp_max}°C</p>
                 </Detail>
                 <Detail>
-                  <h1>최저 :&nbsp;</h1>
-                  <p>{weather.temp_min}</p>
+                  <h1>Min :&nbsp;</h1>
+                  <p>{weather.temp_min}°C</p>
                 </Detail>
               </TempDetailText>
             </CardInfoLeft>
@@ -42,11 +42,11 @@ export const WeatherInfo = ({ forecast, weather }: WeatherInfo) => {
               </TempIcon>
               <TempDetailText>
                 <Detail>
-                  <h1>일출 :&nbsp;</h1>
+                  <h1>Sunrise :&nbsp;</h1>
                   <p>{weather.sunrise}</p>
                 </Detail>
                 <Detail>
-                  <h1>일몰 :&nbsp;</h1>
+                  <h1>Sunset :&nbsp;</h1>
                   <p>{weather.sunset}</p>
                 </Detail>
               </TempDetailText>
@@ -55,7 +55,7 @@ export const WeatherInfo = ({ forecast, weather }: WeatherInfo) => {
         </WeatherCard>
       </LeftInfo>
       <RightInfo>
-        {forecast.list.slice(3, 8).map((l, index) => (
+        {forecast.list.slice(0, 5).map((l, index) => (
           <ForecastCard key={index} list={l} />
         ))}
       </RightInfo>
