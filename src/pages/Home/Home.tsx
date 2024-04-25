@@ -1,7 +1,18 @@
 import styled from "styled-components";
-import { Card } from "../../components/Card";
 import { Theme } from "../../styles/theme";
-import { useGetWeathers } from "../../hooks/useGetWeathers";
+import { useGeoLocation } from "../../hooks/useGeoLocation";
+import { useEffect, useState } from "react";
+import {
+  Coordinate,
+  ForecastWeather,
+  Weather,
+} from "../../interfaces/weatherType";
+import { getForecastWeather, getWeather } from "../../api/weather";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import { otherCities } from "../../data/cities";
+import { GooMap } from "../../components/GooMap";
+import { WeatherInfo } from "../../components/WeatherInfo";
+import { CityCard } from "../../components/CityCard";
 
 // http://api.openweathermap.org/geo/1.0/direct?q=korea&limit={limit}&appid={API key}
 // http://api.openweathermap.org/geo/1.0/direct?q=korea&appid={API key}
@@ -24,38 +35,182 @@ export const getDate = () => {
   return year + "." + month + "." + day;
 };
 
-const Home = () => {
-  const weathers = useGetWeathers();
+export const Home = () => {
+  const { coordinates, updateLocation } = useGeoLocation();
+  const [forecast, setForecast] = useState<ForecastWeather>({
+    city: {
+      name: "",
+    },
+    cnt: 0,
+    cod: "",
+    list: [],
+    message: 0,
+  });
+  const [weather, setWeather] = useState<Weather>({
+    city: "",
+    icon: "",
+    weather: "",
+    sunrise: "",
+    sunset: "",
+    temp: "",
+    temp_max: "",
+    temp_min: "",
+    date: "",
+    id: "",
+  });
+  const [otherCitiesWeather, setOtherCitiesWeather] = useState<Weather[]>([]);
+
+  const forecastWeatherQuery = useQuery({
+    queryKey: ["forecastWeather", coordinates],
+    queryFn: () => getForecastWeather(coordinates),
+    enabled: !!coordinates,
+  });
+
+  const weatherQuery = useQuery({
+    queryKey: ["weather", coordinates],
+    queryFn: () => getWeather(coordinates),
+    enabled: !!coordinates,
+  });
+
+  const otherCitiesQuery = useQueries({
+    queries: Object.values(otherCities).map((city) => ({
+      queryKey: ["otherCities", city],
+      queryFn: () => getWeather(city),
+    })),
+    combine: (results) => {
+      return {
+        data: results.map((result) => result.data),
+        pending: results.some((result) => result.isPending),
+      };
+    },
+  });
+
+  useEffect(() => {
+    if (!forecastWeatherQuery.isLoading) {
+      setForecast(forecastWeatherQuery.data);
+    }
+  }, [forecastWeatherQuery.isLoading, forecastWeatherQuery.data]);
+
+  useEffect(() => {
+    if (!weatherQuery.isLoading) {
+      const tempData = {
+        city: weatherQuery.data.name.replace(/\s+/g, ""),
+        icon: weatherQuery.data.weather[0].icon,
+        weather: weatherQuery.data.weather[0].main,
+        sunrise: getTime(weatherQuery.data.sys.sunrise),
+        sunset: getTime(weatherQuery.data.sys.sunset),
+        temp: weatherQuery.data.main.temp.toFixed(1),
+        temp_max: weatherQuery.data.main.temp_max.toFixed(1),
+        temp_min: weatherQuery.data.main.temp_min.toFixed(1),
+        date: getDate(),
+        id: weatherQuery.data.id,
+      };
+      setWeather(tempData);
+    }
+  }, [weatherQuery.isLoading, weatherQuery.data]);
+
+  useEffect(() => {
+    if (!otherCitiesQuery.pending) {
+      const weatherTemp = otherCitiesQuery.data.map((city) => {
+        return {
+          city: city.name.replace(/\s+/g, ""),
+          icon: city.weather[0].icon,
+          weather: city.weather[0].main,
+          sunrise: getTime(city.sys.sunrise),
+          sunset: getTime(city.sys.sunset),
+          temp: city.main.temp.toFixed(1),
+          temp_max: city.main.temp_max.toFixed(1),
+          temp_min: city.main.temp_min.toFixed(1),
+          date: getDate(),
+          id: city.id,
+        };
+      });
+      setOtherCitiesWeather(weatherTemp);
+    }
+  }, [otherCitiesQuery.pending, otherCitiesQuery.data]);
+
+  const getLocation = (data: Coordinate) => {
+    if (window.confirm("현재 위치 날씨를 조회하시겠습니까?")) {
+      updateLocation(data);
+    }
+  };
+
   return (
-    <>
-      <Container>
-        <ContainerTop>
-          {weathers.map((weather, index) => (
-            <Card key={weather.id} weather={weather} />
+    <Container>
+      <LeftContainer>
+        <MapContainer>
+          <GooMap coordinates={coordinates} getLocation={getLocation} />
+        </MapContainer>
+        <InfoContainer>
+          <WeatherInfo forecast={forecast} weather={weather} />
+        </InfoContainer>
+      </LeftContainer>
+      <RightContainer>
+        <TextContainer>
+          <h1>🌎 Other Large Cities</h1>
+        </TextContainer>
+        <CardContainer>
+          {otherCitiesWeather.map((weather) => (
+            <CityCard key={weather.id} weather={weather} />
           ))}
-        </ContainerTop>
-      </Container>
-    </>
+        </CardContainer>
+      </RightContainer>
+    </Container>
   );
 };
+
 const Container = styled.div<{ theme: Theme }>`
   display: flex;
-  flex-direction: column;
-  height: calc(100vh - 70px);
   width: 100%;
-  overflow-x: hidden;
+  height: calc(100vh - 70px);
+  flex-direction: row;
   background-color: ${(props) => props.theme.background};
 `;
-const ContainerTop = styled.div`
-  flex: 1;
-  overflow-x: hidden;
-  display: grid;
-  grid-gap: 25px;
-  gap: 25px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding: 10px;
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+const LeftContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  height: 100%;
+`;
+const RightContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+  height: 100%;
+`;
+
+const TextContainer = styled.div<{ theme: Theme }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10%;
+  color: ${(props) => props.theme.color};
+  h1 {
+    font-size: 30px;
+    font-weight: 600;
   }
 `;
-export default Home;
+const CardContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 90%;
+  width: 100%;
+`;
+
+const MapContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50%;
+`;
+const InfoContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50%;
+`;

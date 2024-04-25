@@ -1,14 +1,12 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Header } from "./components/Header";
 import { GlobalStyle } from "./styles/GlobalStyle";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Home from "./pages/Home/Home";
 import { useThemeStore } from "./store/themeStore";
 import { darkTheme, lightTheme } from "./styles/theme";
 import { ThemeProvider } from "styled-components";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { Map } from "./pages/map/Map";
 import { Layout } from "./components/Layout";
+import { Home } from "./pages/Home/Home";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -20,17 +18,17 @@ const router = createBrowserRouter([
         path: "",
         element: <Home />,
       },
-      {
-        path: "map",
-        element: <Map />,
-      },
+      // {
+      //   path: "map",
+      //   element: <Map />,
+      // },
     ],
   },
 ]);
 
 function App() {
   const { theme } = useThemeStore();
-  const currentTheme = theme === "light" ? lightTheme : darkTheme;
+  const currentTheme = theme === "Light" ? lightTheme : darkTheme;
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={currentTheme}>

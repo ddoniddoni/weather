@@ -44,4 +44,7 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+#map {
+	border-radius: 20px;
+}
 `;

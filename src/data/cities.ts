@@ -36,3 +36,30 @@ export const koreaPlace = {
     lng: 127.27341,
   },
 };
+
+export const otherCities = {
+  JP: {
+    lat: 35.6894,
+    lng: 139.692,
+  },
+  US: {
+    lat: 38.9071923,
+    lng: -77.0368707,
+  },
+  CN: {
+    lat: 39.9035,
+    lng: 116.388,
+  },
+  Canada: {
+    lat: 45.4215296,
+    lng: -75.69719309,
+  },
+  Russia: {
+    lat: 55.7508,
+    lng: 37.6172,
+  },
+  australia: {
+    lat: -35.30806,
+    lng: 149.12444,
+  },
+};

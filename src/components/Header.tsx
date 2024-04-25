@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useThemeStore } from "../store/themeStore";
 import { Theme } from "../styles/theme";
-import { BrowserRouter, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export const Header = () => {
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
@@ -9,25 +9,27 @@ export const Header = () => {
   return (
     <Nav>
       <Logo>
-        <img src="/logo/logo.png" alt="" />
+        <Link to="/">
+          <img src="/logo/logo.png" alt="" />
+        </Link>
       </Logo>
       <NavMenu>
         <Link to="/">
           <img src="/icons/home-icon.svg" alt="Home" />
           <span>Home</span>
         </Link>
-        <Link to="/map">
+        {/* <Link to="/map">
           <img
             src="/icons/map.svg"
             alt="Map"
             style={{ width: "16px", height: "16px" }}
           />
           <span>Map</span>
-        </Link>
+        </Link> */}
       </NavMenu>
       <Wrapper>
         <ThemeButton onClick={toggleTheme}>
-          {toggleState === "light" ? "dark" : "light"}
+          {toggleState === "Light" ? "Dark" : "Light"}
         </ThemeButton>
       </Wrapper>
     </Nav>
@@ -45,7 +47,7 @@ const Logo = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
+  width: 113px;
   img {
     display: block;
     width: 50px;
@@ -84,6 +86,7 @@ const NavMenu = styled.div`
       line-height: 1.08;
       white-space: nowrap;
       position: relative;
+      padding-top: 7px;
 
       &:before {
         background-color: rgb(249, 249, 249);

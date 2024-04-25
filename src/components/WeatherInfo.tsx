@@ -66,7 +66,7 @@ export const WeatherInfo = ({ forecast, weather }: WeatherInfo) => {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-  width: 90%;
+  width: 95%;
   height: 90%;
 `;
 const LeftInfo = styled.div`

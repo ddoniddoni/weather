@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Weather } from "../interfaces/weatherType";
+import { Coordinate, Location, Weather } from "../interfaces/weatherType";
 import { useQueries } from "@tanstack/react-query";
-import { koreaPlace } from "../data/korea";
+import { koreaPlace } from "../data/cities";
 import { getWeather } from "../api/weather";
 import { getDate, getTime } from "../pages/Home/Home";
 
@@ -9,9 +9,9 @@ export const useGetWeathers = () => {
   const [weathers, setWeathers] = useState<Weather[]>([]);
 
   const combinedQueries = useQueries({
-    queries: Object.values(koreaPlace).map((k) => ({
-      queryKey: ["weathers", k],
-      queryFn: () => getWeather(k),
+    queries: Object.values(koreaPlace).map((place) => ({
+      queryKey: ["weathers", place],
+      queryFn: () => getWeather(place),
     })),
     combine: (results) => {
       return {

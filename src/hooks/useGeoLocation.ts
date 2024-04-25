@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Coordinate } from "../interfaces/weatherType";
 
 export interface ILocationType {
   loaded: boolean;
@@ -49,6 +50,17 @@ export const useGeoLocation = () => {
       },
     });
   };
+
+  const updateLocation = (newCoordinates: Coordinate) => {
+    setLocation((prevLocation) => ({
+      ...prevLocation,
+      coordinates: {
+        lat: newCoordinates.lat,
+        lng: newCoordinates.lng,
+      },
+    }));
+  };
+
   useEffect(() => {
     if (!("geolocation" in navigator)) {
       onError({
@@ -59,5 +71,5 @@ export const useGeoLocation = () => {
     navigator.geolocation.getCurrentPosition(onSuccess, onError);
   }, []);
 
-  return location;
+  return { ...location, updateLocation };
 };

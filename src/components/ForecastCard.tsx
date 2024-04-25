@@ -1,6 +1,6 @@
-import { ForecastWeather } from "../interfaces/weatherType";
 import styled from "styled-components";
-import { getDate, getTime } from "../pages/Home/Home";
+import { getTime } from "../pages/Home/Home";
+import { Theme } from "../styles/theme";
 
 interface ListType {
   clouds: {};
@@ -43,16 +43,16 @@ export const ForecastCard = ({ list }: List) => {
   );
 };
 
-const Card = styled.div`
+const Card = styled.div<{ theme: Theme }>`
   width: 130px;
   height: 90%;
-  background-color: #1b1b1d;
+  background-color: ${(props) => props.theme.forecastCardColor};
   border-radius: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  color: #ffffff;
+  color: ${(props) => props.theme.color};
 `;
 const CardText = styled.div`
   display: flex;
@@ -68,7 +68,7 @@ const Border = styled.span`
   align-items: center;
   height: 1px;
   width: 65%;
-  background-color: #686666;
+  background-color: #ffffff;
 `;
 const CardInfo = styled.div`
   display: flex;

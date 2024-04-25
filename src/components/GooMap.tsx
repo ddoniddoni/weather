@@ -1,6 +1,12 @@
 import { GoogleMap, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
 import { useThemeStore } from "../store/themeStore";
-import { Location } from "../interfaces/weatherType";
+import { Coordinate, Location } from "../interfaces/weatherType";
+import { useState } from "react";
+
+interface ChildComponentProps {
+  getLocation: (data: Coordinate) => void;
+  coordinates: Coordinate;
+}
 
 const darkMapStyle = [
   { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
@@ -84,11 +90,11 @@ const darkMapStyle = [
 ];
 
 const containerStyle = {
-  width: "90%",
+  width: "95%",
   height: "90%",
 };
-export const GooMap = ({ coordinates }: Location) => {
-  const style = useThemeStore().theme === "light" ? null : darkMapStyle;
+export const GooMap = ({ getLocation, coordinates }: ChildComponentProps) => {
+  const style = useThemeStore().theme === "Light" ? null : darkMapStyle;
   const center = coordinates;
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -99,12 +105,13 @@ export const GooMap = ({ coordinates }: Location) => {
     const lat = event.latLng?.lat();
     const lng = event.latLng?.lng();
     if (lat && lng) {
-      alert(`Latitude: ${lat}, Longitude: ${lng}`);
+      getLocation({ lat, lng });
     }
   };
 
   return isLoaded ? (
     <GoogleMap
+      id="map"
       mapContainerStyle={containerStyle}
       center={center}
       zoom={16}
