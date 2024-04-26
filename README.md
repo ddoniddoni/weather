@@ -1,7 +1,9 @@
 # Weather Web
 
-# Skils
+## 기능
 
-## React + Typescript
+## Skils
 
-## With zustand, tanstack/react-query
+## React + Typescript, zustand, tanstack/react-query
+
+Link: [Today's Weather](https://weather-3b142.web.app/)
